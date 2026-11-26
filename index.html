@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="The Content Machine mission control. Sample data only. A wall of widgets for five placeholder channels: YouTube, X, Instagram, Facebook, and TikTok.">
+<title>The Content Machine — Mission Control (sample)</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f9d72'/%3E%3Cpath d='M7 21V13h3.2v8H7zm6.2 0V8h3.2v13h-3.2zm6.4 0v-6h3.2v6h-3.2z' fill='white'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #e7f4ef;
+    --ink: #12261f;
+    --muted: #5c726a;
+    --line: #d7ebe3;
+    --card: #ffffff;
+    --mint: #0f9d72;
+    --mint-deep: #0c7a58;
+    --mint-soft: #e5f8f1;
+    --blue: #1a6fd4;
+    --blue-deep: #1558b0;
+    --blue-soft: #e7f1ff;
+    --shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 10px 28px rgba(16, 72, 56, .07);
+    --radius: 14px;
+    --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", "Cascadia Mono", ui-monospace, monospace;
+    --rainbow: linear-gradient(90deg, #ff4d6d, #ff8a3d, #f0a202, #1fbe7a, #1a9bf0, #7a5cff, #ff4fa3);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    color: var(--ink);
+    font-family: var(--sans);
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(1100px 520px at 112% -12%, rgba(26, 111, 212, .18), transparent 56%),
+      radial-gradient(900px 480px at -12% -18%, rgba(15, 157, 114, .22), transparent 52%),
+      radial-gradient(420px 260px at 78% 0%, rgba(255, 79, 163, .08), transparent 70%),
+      radial-gradient(circle, rgba(18, 70, 55, .045) 1px, transparent 1px);
+    background-size: auto, auto, auto, 20px 20px;
+    letter-spacing: -0.011em;
+  }
+  .rainbow {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: 4px;
+    background: var(--rainbow);
+  }
+  .page { max-width: 1440px; margin: 0 auto; padding: 14px 16px 32px; }
+  h1, h2, p { margin: 0; }
+  h1 { font-size: 22px; line-height: 1.1; letter-spacing: -0.03em; }
+  h2 { font-size: 15px; letter-spacing: -0.02em; }
+  .deck { color: var(--muted); font-size: 12px; line-height: 1.45; margin-top: 3px; max-width: 62ch; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
+  .up { color: var(--mint-deep); }
+  .down { color: #c43838; }
+
+  .mast {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    background: rgba(255,255,255,.9);
+    border: 1px solid rgba(15, 90, 70, .1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 12px 14px;
+    backdrop-filter: blur(8px);
+  }
+  .brand { display: flex; gap: 12px; align-items: center; min-width: 0; }
+  .logo {
+    width: 44px; height: 44px; flex: none; border-radius: 12px;
+    background: linear-gradient(155deg, #14b888 0%, #1a6fd4 100%);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px;
+    align-items: end; padding: 9px 8px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
+  }
+  .logo span { display: block; background: #fff; border-radius: 2px; }
+  .logo span:nth-child(1) { height: 38%; }
+  .logo span:nth-child(2) { height: 70%; }
+  .logo span:nth-child(3) { height: 100%; }
+  .logo span:nth-child(4) { height: 52%; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--mint-deep);
+    margin-bottom: 2px;
+  }
+  .sub { color: var(--muted); font-size: 12.5px; line-height: 1.35; margin-top: 3px; }
+  .mast-meta { display: flex; align-items: stretch; gap: 8px; flex: none; }
+  .chip, .stamp, .clockbox {
+    background: var(--mint-soft);
+    border: 1px solid #cfeade;
+    border-radius: 10px;
+    padding: 7px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
+  }
+  .chip {
+    background: #fff;
+    border: 1px dashed #8fd0b8;
+    color: var(--mint-deep);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+  }
+  .chip b {
+    width: 8px; height: 8px; border-radius: 99px;
+    background: var(--rainbow);
+    display: block;
+  }
+  .k {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stamp strong, .clockbox strong { font-size: 14px; font-weight: 650; }
+  .clockbox { background: var(--blue-soft); border-color: #d3e4fb; min-width: 132px; }
+  .clockbox strong { font-size: 20px; color: var(--blue-deep); }
+  .pulse {
+    width: 7px; height: 7px; border-radius: 99px; background: var(--mint);
+    box-shadow: 0 0 0 0 rgba(15, 157, 114, .55);
+    animation: pulse 1.8s ease-out infinite;
+    display: inline-block;
+  }
+  @keyframes pulse {
+    70% { box-shadow: 0 0 0 7px rgba(15, 157, 114, 0); }
+  }
+
+  .ticker {
+    margin-top: 10px;
+    background: #fff;
+    border: 1px solid rgba(15, 90, 70, .1);
+    border-radius: 999px;
+    overflow: hidden;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--shadow);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .ticker-track {
+    display: flex;
+    gap: 22px;
+    width: max-content;
+    animation: marquee 80s linear infinite;
+    padding-left: 16px;
+  }
+  .ticker span {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #3e5c54;
+    white-space: nowrap;
+  }
+  .ticker i {
+    display: inline-block;
+    width: 6px; height: 6px; border-radius: 99px;
+    margin-right: 8px;
+    transform: translateY(-1px);
+  }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  .row { display: grid; gap: 10px; margin-top: 10px; }
+  .kpis { grid-template-columns: repeat(4, 1fr); }
+  .sparks { grid-template-columns: repeat(5, 1fr); }
+  .hero { grid-template-columns: 1.22fr .92fr 1.05fr; align-items: stretch; }
+  .hero > .card { display: flex; flex-direction: column; }
+  .pin-bottom { margin-top: auto; padding-top: 12px; }
+  .split { grid-template-columns: 1.15fr .85fr; }
+  .trio { grid-template-columns: 1.05fr 1fr .95fr; }
+  .conns { grid-template-columns: repeat(5, 1fr); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid rgba(15, 90, 70, .1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 12px 12px 12px;
+    min-width: 0;
+    position: relative;
+  }
+  .card:before, .card:after {
+    content: "";
+    position: absolute;
+    width: 8px; height: 8px;
+    pointer-events: none;
+    border-color: #9fd8c8;
+    border-style: solid;
+  }
+  .card:before { top: 5px; left: 5px; border-width: 1.5px 0 0 1.5px; }
+  .card:after { right: 5px; bottom: 5px; border-width: 0 1.5px 1.5px 0; }
+  .kpi { border-top: 3px solid var(--accent); padding-top: 10px; }
+  .kpi:nth-child(1) { --accent: #ff4d6d; }
+  .kpi:nth-child(2) { --accent: #1a6fd4; }
+  .kpi:nth-child(3) { --accent: #f0a202; }
+  .kpi:nth-child(4) { --accent: #0f9d72; }
+  .kpi .k { margin-bottom: 6px; }
+  .kpi .big { font-size: 28px; line-height: 1; color: var(--ink); }
+  .kpi .sub { min-height: 2.6em; }
+  .kpi .up { color: var(--mint-deep); }
+  .sparkcard { border-top: 3px solid var(--brand); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .sparkhead, .meter, .legend, .frow, .conn-top, .sc-top, .rx-top, .sess-top {
+    display: flex; align-items: center; gap: 8px; min-width: 0;
+  }
+  .sparkhead .who, .meter .who, .frow .who { min-width: 0; }
+  .name { font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aka { color: var(--muted); font-weight: 500; font-size: 11px; }
+  .spark-metric { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .spark-metric .big { font-size: 22px; line-height: 1; }
+  .sparkline { width: 100%; height: 38px; display: block; }
+  .sparkline.f-spark { width: 100%; height: 26px; }
+  .meta { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 11px; font-family: var(--mono); }
+  .card-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--blue-deep);
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 3px;
+  }
+  .kicker i, .dot {
+    width: 7px; height: 7px; border-radius: 99px; background: var(--c, var(--mint)); display: inline-block; flex: none;
+  }
+  .mark { display: block; flex: none; }
+
+  .vol-plot { display: grid; grid-template-columns: 16px 1fr; gap: 6px; height: 168px; }
+  .yaxis {
+    display: flex; flex-direction: column; justify-content: space-between;
+    font-family: var(--mono); font-size: 10px; color: var(--muted); text-align: right;
+  }
+  .bars {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; height: 100%;
+    border-bottom: 1px solid var(--line);
+    background-image: repeating-linear-gradient(to top, transparent, transparent calc(25% - 1px), #e7f3ee calc(25% - 1px), #e7f3ee 25%);
+  }
+  .cols { display: flex; align-items: flex-end; gap: 2px; height: 100%; }
+  .bar {
+    flex: 1; border-radius: 2px 2px 0 0; min-width: 0;
+    background: var(--fill);
+  }
+  .bar.zero { height: 2px !important; opacity: .35; }
+  .vol-labs { display: grid; grid-template-columns: 16px 1fr; gap: 6px; margin-top: 4px; }
+  .vol-labs .labs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .vol-labs span { text-align: center; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .legend { flex-wrap: wrap; gap: 8px 12px; margin-top: 10px; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: #244239; }
+  .daystrip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+  .daystrip div {
+    background: #f4fbf8; border: 1px solid var(--line); border-radius: 8px; padding: 5px 4px 4px; text-align: center; min-width: 0;
+  }
+  .daystrip strong { display: block; font-size: 11px; }
+  .daystrip em, .daystrip .dlbl { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--muted); display: block; }
+  .daystrip .dlbl { color: var(--blue-deep); letter-spacing: .03em; }
+  .callout {
+    margin-top: 8px; font-size: 12px; color: #244239;
+    background: linear-gradient(90deg, #e7f1ff, #e5f8f1);
+    border-radius: 8px; padding: 6px 8px;
+  }
+
+  .er-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; }
+  .er-top .big { font-size: 40px; line-height: .9; color: var(--blue-deep); }
+  .formula { font-size: 11px; color: var(--muted); line-height: 1.35; margin: 6px 0 8px; }
+  .meter { display: grid; grid-template-columns: 92px 1fr 58px; gap: 6px; margin-top: 5px; }
+  .meter .who { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 650; }
+  .track { height: 8px; background: #e7f3ee; border-radius: 99px; overflow: hidden; }
+  .track span { display: block; height: 100%; border-radius: 99px; }
+  .meter .val { font-family: var(--mono); font-size: 11px; text-align: right; }
+  .share {
+    display: flex; height: 12px; width: 100%; border-radius: 99px; overflow: hidden; margin-top: 10px;
+    box-shadow: inset 0 0 0 1px rgba(18,38,31,.06);
+  }
+  .share i { display: block; height: 100%; }
+  .share-key { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 6px; }
+  .share-key span { font-size: 11px; color: #244239; display: inline-flex; align-items: center; gap: 4px; }
+  .pair, .rxsum { display: grid; gap: 6px; margin-top: 10px; }
+  .pair { grid-template-columns: 1fr 1fr; }
+  .rxsum { grid-template-columns: repeat(3, 1fr); }
+  .pair div, .rxsum div { background: #f4fbf8; border-radius: 8px; padding: 6px 8px; border: 1px solid var(--line); min-width: 0; }
+  .pair strong, .rxsum strong { display: block; font-size: 14px; }
+  .pair span, .rxsum span { font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; font-family: var(--mono); }
+
+  .top-row {
+    display: grid;
+    grid-template-columns: 20px 18px 1fr auto;
+    gap: 7px;
+    align-items: center;
+    padding: 6px 0;
+    border-top: 1px solid #e8f4ef;
+  }
+  .rank {
+    width: 20px; height: 20px; border-radius: 6px;
+    display: grid; place-items: center;
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+  }
+  .top-title { font-size: 12.5px; font-weight: 700; line-height: 1.3; }
+  .clamp2, .clamp3 {
+    display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .clamp2 { -webkit-line-clamp: 2; line-clamp: 2; }
+  .clamp3 { -webkit-line-clamp: 3; line-clamp: 3; }
+  .top-meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .top-stat { text-align: right; }
+  .top-stat b { display: block; font-size: 12px; }
+  .top-stat span { font-family: var(--mono); font-size: 10px; color: var(--blue-deep); }
+  .vbar { height: 3px; background: #e7f3ee; border-radius: 99px; margin-top: 4px; }
+  .vbar span { display: block; height: 100%; border-radius: 99px; background: var(--c); }
+  .bestline {
+    margin-top: 8px; font-size: 12px; padding: 6px 8px; border-radius: 8px;
+    background: #fff7e8; color: #6a4a08; border: 1px solid #f3e2b8;
+  }
+
+  .queue { border-top: 3px solid transparent; background:
+    linear-gradient(#fff, #fff) padding-box,
+    var(--rainbow) border-box;
+  }
+  .qstats { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .pill {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .04em;
+    border-radius: 999px; padding: 4px 7px; border: 1px solid transparent; white-space: nowrap;
+  }
+  .pill.ready { background: var(--mint-soft); color: var(--mint-deep); }
+  .pill.queued { background: var(--blue-soft); color: var(--blue-deep); }
+  .pill.cutting { background: #fff1e4; color: #b85a00; }
+  .slots { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; margin: 2px 0 10px; }
+  .slots i { display: block; height: 8px; border-radius: 99px; background: #e5f3ee; }
+  .slots i.on { background: var(--c); }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .scard {
+    border: 1px solid rgba(15, 90, 70, .1);
+    border-left: 3px solid var(--brand);
+    border-radius: 12px;
+    padding: 10px 10px 10px 12px;
+    background: linear-gradient(180deg, #fff, #f8fdfb);
+    display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 176px;
+  }
+  .sc-top { justify-content: space-between; }
+  .sc-id { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: 12px; font-weight: 750; }
+  .when { font-family: var(--mono); font-size: 11px; color: var(--blue-deep); }
+  .caption { font-size: 13px; font-weight: 700; line-height: 1.35; letter-spacing: -0.015em; }
+  .about { color: #3d5b53; font-size: 12px; line-height: 1.4; }
+  .sc-foot { margin-top: auto; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .04em;
+    background: #f4fbf8; border: 1px solid var(--line); color: #244239;
+    border-radius: 999px; padding: 2px 6px;
+  }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+  .step { background: #f4fbf8; border: 1px solid var(--line); border-radius: 10px; padding: 7px 8px; }
+  .step b { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .step span { display: block; color: var(--muted); font-size: 11px; line-height: 1.35; margin-top: 3px; }
+  .n {
+    width: 16px; height: 16px; border-radius: 99px; display: grid; place-items: center;
+    color: #fff; font-family: var(--mono); font-size: 10px; background: var(--c);
+  }
+  .eq { display: flex; align-items: baseline; gap: 8px; margin: 2px 0 8px; }
+  .eq .big { font-size: 26px; }
+  .eq em { font-style: normal; color: var(--muted); font-size: 12px; }
+  .sess { padding-top: 8px; margin-top: 8px; border-top: 1px solid #e8f4ef; }
+  .sess-top { justify-content: space-between; }
+  .sess-top strong { font-size: 12.5px; }
+  .sess p { color: var(--muted); font-size: 12px; margin: 2px 0 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .pchip {
+    display: inline-flex; align-items: center; gap: 4px;
+    border-radius: 999px; padding: 2px 6px 2px 3px;
+    background: #fff; border: 1px solid var(--line); font-size: 10.5px;
+  }
+
+  .heat { display: grid; grid-template-columns: 28px repeat(12, 1fr); gap: 3px; align-items: center; }
+  .heat .h { font-family: var(--mono); font-size: 9px; color: var(--muted); text-align: center; }
+  .heat .h.row { text-align: right; padding-right: 2px; }
+  .heat i { display: block; height: 18px; border-radius: 3px; }
+  .heat-key { display: flex; align-items: center; gap: 4px; margin-top: 8px; color: var(--muted); font-size: 11px; }
+  .heat-key i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  .frow { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 6px 0; border-top: 1px solid #e8f4ef; }
+  .fmain { min-width: 0; }
+  .fsub { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .fgain { height: 4px; background: #e7f3ee; border-radius: 99px; margin-top: 4px; }
+  .fgain span { display: block; height: 100%; border-radius: 99px; background: var(--brand); }
+  .fnum { text-align: right; }
+  .fnum b { display: block; font-size: 13px; }
+  .fnum span { font-family: var(--mono); font-size: 11px; }
+  .f-spark { width: 86px; height: 28px; }
+
+  .fmt-bar, .rx-bar { display: flex; height: 12px; width: 100%; border-radius: 99px; overflow: hidden; }
+  .fmt-bar { height: 16px; margin: 4px 0 8px; }
+  .fmt-bar i, .rx-bar i { display: block; height: 100%; }
+  .fmt-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; margin-bottom: 8px; }
+  .fmt-legend span, .pkey { display: flex; align-items: center; gap: 5px; font-size: 11.5px; min-width: 0; }
+  .pkey { justify-content: space-between; }
+  .pkey .l { display: flex; align-items: center; gap: 5px; min-width: 0; }
+  .platbar { display: grid; grid-template-columns: 78px 1fr 22px; gap: 6px; align-items: center; margin-top: 5px; font-size: 11px; }
+  .rx { padding: 6px 0; border-top: 1px solid #e8f4ef; }
+  .rx-top { justify-content: space-between; font-size: 12px; }
+  .rx-nums { display: flex; justify-content: space-between; gap: 6px; margin-top: 4px; color: var(--muted); font-size: 10.5px; }
+  .rx-nums b { color: var(--ink); font-weight: 650; }
+
+  .conn .statusline { display: flex; justify-content: space-between; gap: 6px; align-items: center; margin: 8px 0; }
+  .ok {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--mint-soft); color: var(--mint-deep);
+    border-radius: 999px; padding: 3px 7px; font-size: 11px; font-weight: 700;
+  }
+  .ok i { width: 6px; height: 6px; border-radius: 99px; background: var(--mint); display: block; }
+  .conn dl { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0; }
+  .conn dl div { background: #f4fbf8; border-radius: 8px; padding: 5px 6px; border: 1px solid var(--line); }
+  .conn dt { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .conn dd { margin: 2px 0 0; font-size: 12px; font-weight: 700; }
+  .sync { margin-top: 8px; color: var(--muted); font-size: 11px; font-family: var(--mono); }
+
+  .foot {
+    margin-top: 12px; color: #4d675f; font-size: 11.5px; line-height: 1.45;
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .noscript {
+    max-width: 720px; margin: 24px auto; background: #fff; padding: 16px; border-radius: 12px;
+  }
+
+  @media (max-width: 1180px) {
+    .sparks { grid-template-columns: repeat(3, 1fr); }
+    .hero { grid-template-columns: 1fr 1fr; }
+    .hero .span2 { grid-column: 1 / -1; }
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .conns, .trio, .split, .kpis { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 780px) {
+    .mast, .mast-meta { flex-direction: column; align-items: stretch; }
+    .sparks, .hero, .cards, .conns, .trio, .split, .kpis, .steps { grid-template-columns: 1fr; }
+    .daystrip { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    .hero .span2 { grid-column: auto; }
+    .slots { grid-template-columns: repeat(8, 1fr); }
+    .clockbox strong { font-size: 28px; }
+    .pair, .fmt-legend, .conn dl { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track, .pulse { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="rainbow"></div>
+<main id="app" class="page"></main>
+<noscript><p class="noscript">This sample wall needs JavaScript to draw the widgets. It does not call any network API.</p></noscript>
+<script>
+/* SAMPLE / MOCK DATA — not a live account, not an API.
+   Every channel is a placeholder. Nothing here is Jacob's profile, a real handle, or a real URL. */
+const DAYS = [
+  { short: "Fri", num: "20" },
+  { short: "Sat", num: "21" },
+  { short: "Sun", num: "22" },
+  { short: "Mon", num: "23" },
+  { short: "Tue", num: "24" },
+  { short: "Wed", num: "25" },
+  { short: "Thu", num: "26" }
+];
+const NEXT_ISO = "2026-11-27T09:30:00Z";
+const STAMP = "26 Nov 2026 · 17:40 UTC";
+const HEAT_COLORS = ["#e5f4ee", "#b7ead9", "#7fd0f2", "#3d7ef0", "#7a5cff", "#ff4d6d"];
+const HEAT_NAME = ["Quiet", "Low", "Steady", "Busy", "Hot", "Peak"];
+const HEAT_HOURS = ["00", "02", "04", "06", "08", "10", "12", "14", "16", "18", "20", "22"];
+const RANK_BG = ["#ff4d6d", "#ff8a3d", "#f0a202", "#0f9d72", "#1a6fd4", "#7a5cff", "#ff4fa3", "#14b8d4"];
+const FORMATS = {
+  short: { label: "Short video", color: "#ff4d6d" },
+  single: { label: "Single post", color: "#1a6fd4" },
+  thread: { label: "Thread", color: "#7a5cff" },
+  long: { label: "Long video", color: "#0f9d72" },
+  carousel: { label: "Carousel", color: "#f0a202" },
+  community: { label: "Community", color: "#14b8d4" }
+};
+const DATA = {
+  prior: { posts: 39, rate: 7.64, followers: 1810 },
+  capacity: 16,
+  /* rows Fri→Thu, columns 00:00→22:00 step 2h, UTC, intensity 0–5 */
+  heat: [
+    [0, 0, 0, 1, 2, 3, 2, 4, 3, 5, 4, 1],
+    [0, 0, 0, 0, 1, 2, 2, 3, 4, 4, 2, 0],
+    [0, 0, 0, 1, 1, 2, 3, 3, 5, 4, 3, 1],
+    [0, 0, 1, 2, 3, 4, 2, 3, 4, 5, 3, 1],
+    [0, 0, 0, 1, 2, 3, 4, 5, 4, 5, 4, 2],
+    [0, 0, 0, 2, 3, 3, 2, 4, 5, 4, 3, 1],
+    [0, 0, 0, 1, 2, 4, 3, 3, 4, 2, 1, 0]
+  ],
+  ticker: [
+    "Sample only · no live accounts connected",
+    "One sitting of the idea, then a native cut for each platform",
+    "Source sitting S-14 · 92 minutes · split into 9 sample versions",
+    "YouTube long cut marked Ready · placeholder go-live Fri 27 Nov 09:30 UTC",
+    "TikTok hook variant B is its own post, not a cross-post",
+    "Instagram reel written for the grid, cover frame included",
+    "X thread rewritten as text · no video attached",
+    "Facebook retelling scheduled to be read in the feed",
+    "Queue holds the machine's output · 12 placeholder slots filled"
+  ],
+  platforms: [
+    {
+      id: "youtube", name: "YouTube", aka: "",
+      color: "#FF0000", meter: "#FF0000",
+      like: "Likes", comment: "Comments", share: "Shares", mix: [0.78, 0.09],
+      followers: [18134, 18160, 18190, 18240, 18288, 18340, 18420],
+      parts: [["long", 3], ["short", 2], ["community", 1]],
+      days: [
+        { posts: 1, views: 18200, er: 5.8 },
+        { posts: 0, views: 8400, er: 6.4 },
+        { posts: 1, views: 22100, er: 6.1 },
+        { posts: 1, views: 48200, er: 7.9 },
+        { posts: 1, views: 26400, er: 6.6 },
+        { posts: 1, views: 24300, er: 7.2 },
+        { posts: 1, views: 38800, er: 7.8 }
+      ]
+    },
+    {
+      id: "x", name: "X", aka: "Twitter",
+      color: "#0F1419", meter: "#0F1419",
+      like: "Likes", comment: "Replies", share: "Reposts", mix: [0.62, 0.18],
+      followers: [6179, 6202, 6230, 6255, 6278, 6301, 6320],
+      parts: [["thread", 6], ["single", 11]],
+      days: [
+        { posts: 2, views: 12000, er: 4.2 },
+        { posts: 1, views: 8000, er: 4.6 },
+        { posts: 2, views: 11000, er: 5.1 },
+        { posts: 3, views: 14200, er: 4.4 },
+        { posts: 3, views: 18600, er: 5.8 },
+        { posts: 3, views: 15400, er: 5.3 },
+        { posts: 3, views: 15000, er: 5.0 }
+      ]
+    },
+    {
+      id: "instagram", name: "Instagram", aka: "",
+      color: "#E1306C", meter: "linear-gradient(90deg,#f9ce34,#ee2a7b,#6228d7)",
+      like: "Likes", comment: "Comments", share: "Sends", mix: [0.74, 0.07],
+      followers: [21642, 21720, 21805, 21890, 21970, 22040, 22150],
+      parts: [["short", 5], ["carousel", 3]],
+      days: [
+        { posts: 1, views: 14000, er: 8.4 },
+        { posts: 1, views: 12600, er: 9.1 },
+        { posts: 1, views: 15200, er: 8.8 },
+        { posts: 1, views: 28400, er: 11.2 },
+        { posts: 1, views: 19800, er: 9.6 },
+        { posts: 2, views: 36200, er: 10.4 },
+        { posts: 1, views: 25600, er: 10.1 }
+      ]
+    },
+    {
+      id: "facebook", name: "Facebook", aka: "",
+      color: "#1877F2", meter: "#1877F2",
+      like: "Likes", comment: "Comments", share: "Shares", mix: [0.66, 0.12],
+      followers: [9008, 9030, 9012, 9044, 9066, 9088, 9104],
+      parts: [["single", 3], ["short", 2]],
+      days: [
+        { posts: 1, views: 9800, er: 4.9 },
+        { posts: 1, views: 7600, er: 5.1 },
+        { posts: 1, views: 14200, er: 4.6 },
+        { posts: 0, views: 6400, er: 5.8 },
+        { posts: 1, views: 11200, er: 5.2 },
+        { posts: 0, views: 7200, er: 5.9 },
+        { posts: 1, views: 12000, er: 5.4 }
+      ]
+    },
+    {
+      id: "tiktok", name: "TikTok", aka: "",
+      color: "#FE2C55", meter: "linear-gradient(90deg,#25F4EE,#111111 48%,#FE2C55)",
+      like: "Likes", comment: "Comments", share: "Shares", mix: [0.70, 0.06],
+      followers: [33516, 33740, 33990, 34180, 34420, 34610, 34780],
+      parts: [["short", 10]],
+      days: [
+        { posts: 1, views: 42000, er: 7.6 },
+        { posts: 1, views: 38600, er: 8.2 },
+        { posts: 2, views: 68400, er: 10.4 },
+        { posts: 1, views: 45200, er: 8.8 },
+        { posts: 2, views: 79600, er: 9.1 },
+        { posts: 2, views: 91200, er: 11.2 },
+        { posts: 1, views: 47600, er: 9.3 }
+      ]
+    }
+  ],
+  top: [
+    { platform: "tiktok", title: "Stop scrolling. This is the only line that matters.", format: "Short", when: "Tue 24 Nov", views: 128400, likes: 10220, comments: 640, shares: 3780 },
+    { platform: "instagram", title: "I remade one hour into this.", format: "Reel", when: "Wed 25 Nov", views: 64200, likes: 5820, comments: 310, shares: 1640 },
+    { platform: "youtube", title: "A full sitting, left mostly intact.", format: "Long", when: "Mon 23 Nov", views: 48200, likes: 2980, comments: 280, shares: 410 },
+    { platform: "youtube", title: "No intro. Start on the point.", format: "Short", when: "Thu 26 Nov", views: 39100, likes: 3120, comments: 140, shares: 570 },
+    { platform: "x", title: "How one sitting becomes a week of posts.", format: "Thread", when: "Tue 24 Nov", views: 28400, likes: 1120, comments: 340, shares: 360 },
+    { platform: "tiktok", title: "Same clip. Different first sentence.", format: "Short", when: "Wed 25 Nov", views: 22600, likes: 1680, comments: 150, shares: 560 },
+    { platform: "instagram", title: "The split, drawn out.", format: "Carousel", when: "Mon 23 Nov", views: 19800, likes: 1420, comments: 90, shares: 350 },
+    { platform: "facebook", title: "Read this if you will not press play.", format: "Post", when: "Sun 22 Nov", views: 15600, likes: 640, comments: 110, shares: 170 }
+  ],
+  schedule: [
+    { platform: "youtube", format: "Long video", status: "Ready", at: "2026-11-27T09:30:00Z", session: "S-14", caption: "I filmed this once. Here is the full argument, with chapters.", about: "Long-form cut of the source sitting, paced for watch time, with chapters and an end screen." },
+    { platform: "tiktok", format: "Short", status: "Ready", at: "2026-11-27T12:15:00Z", session: "S-14", caption: "The first three seconds are the whole video. Watch.", about: "Vertical hook cut. Same idea as the long piece, opened on the sharpest line." },
+    { platform: "instagram", format: "Reel", status: "Queued", at: "2026-11-27T17:45:00Z", session: "S-14", caption: "Same take. Native framing. Caption written for the grid.", about: "Reel rebuild with on-screen text and a cover frame chosen for the grid." },
+    { platform: "x", format: "Thread", status: "Ready", at: "2026-11-27T19:05:00Z", session: "S-14", caption: "One idea, eight posts. The thread version of this morning's sitting.", about: "Text-native thread. The argument rewritten as a sequence, with no video attached." },
+    { platform: "facebook", format: "Post", status: "Queued", at: "2026-11-28T11:00:00Z", session: "S-14", caption: "The plain-language version, for people who will not press play.", about: "Feed post with a still and a short retelling, written to be read in place." },
+    { platform: "youtube", format: "Short", status: "Cutting", at: "2026-11-28T15:20:00Z", session: "S-14", caption: "Cut 4 of 9. The callback, thirty seconds, no intro.", about: "Short pulled from a later moment in the sitting. Cold open, no greeting." },
+    { platform: "tiktok", format: "Short", status: "Ready", at: "2026-11-28T18:40:00Z", session: "S-15", caption: "Three openers, one clip. This is opener B.", about: "Alternate hook on the same visual, scheduled as its own native post." },
+    { platform: "instagram", format: "Carousel", status: "Queued", at: "2026-11-29T10:10:00Z", session: "S-15", caption: "Source sitting to five platforms. The split, slide by slide.", about: "Carousel that shows how one session was divided, written as a swipe." },
+    { platform: "x", format: "Post", status: "Ready", at: "2026-11-29T13:30:00Z", session: "S-15", caption: "If you only read one line from the sitting, read this one.", about: "Single post. The line that tested best, with no thread attached." },
+    { platform: "facebook", format: "Video", status: "Queued", at: "2026-11-30T09:15:00Z", session: "S-16", caption: "Square crop, burned-in captions, posted where the comments are.", about: "Facebook-native video with captions burned in and a shorter runtime." },
+    { platform: "youtube", format: "Community", status: "Ready", at: "2026-11-30T16:00:00Z", session: "S-16", caption: "Which cut should ship next: the callback, or the cold open?", about: "Community post that points at the week's cuts without uploading them again." },
+    { platform: "tiktok", format: "Short", status: "Cutting", at: "2026-12-01T12:05:00Z", session: "S-16", caption: "Last slice from the sitting. Then the machine waits.", about: "Closing short. It ties the series and leaves the next source session open." }
+  ],
+  sessions: [
+    { id: "S-14", minutes: 92, title: "Repurposing, explained once", extra: 3, chips: [["youtube", "Long"], ["youtube", "Short"], ["tiktok", "Short"], ["instagram", "Reel"], ["x", "Thread"], ["facebook", "Post"]] },
+    { id: "S-15", minutes: 74, title: "Hooks and first frames", extra: 3, chips: [["tiktok", "Short"], ["instagram", "Carousel"], ["x", "Post"], ["youtube", "Short"], ["facebook", "Post"]] },
+    { id: "S-16", minutes: 68, title: "A week of captions from one take", extra: 2, chips: [["facebook", "Video"], ["youtube", "Community"], ["tiktok", "Short"], ["instagram", "Reel"], ["x", "Thread"]] }
+  ]
+};
+
+let gid = 0;
+function uid(prefix) { gid += 1; return prefix + "-" + gid; }
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function comma(n) { return Math.round(n).toLocaleString("en-US"); }
+function compact(n) {
+  const v = Math.round(Math.abs(n));
+  const sign = n < 0 ? "-" : "";
+  if (v >= 1000000) return sign + (v / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m";
+  if (v >= 1000) return sign + (v / 1000).toFixed(v >= 10000 ? 1 : 1).replace(/\.0$/, "") + "k";
+  return sign + String(v);
+}
+function signed(n, digits) {
+  const d = digits == null ? 0 : digits;
+  const v = d ? n.toFixed(d) : String(Math.round(n));
+  return (n > 0 ? "+" : "") + v;
+}
+function mark(id, size) {
+  const px = size || 18;
+  const common = 'class="mark" width="' + px + '" height="' + px + '" viewBox="0 0 24 24" aria-hidden="true"';
+  if (id === "youtube") {
+    return '<svg ' + common + '><rect x="0.8" y="4.2" width="22.4" height="15.6" rx="4.2" fill="#FF0000"/><path d="M10 8.8v6.4l5.8-3.2z" fill="#fff"/></svg>';
+  }
+  if (id === "x") {
+    return '<svg ' + common + '><path fill="#0F1419" d="M14.1 10.5 20.9 3h-2.2l-5.5 6.4L8.6 3H3.2l7.1 10.1L3.4 21h2.2l6-7 4.8 7h5.4l-7.7-10.5Zm-2.1 2.5-.7-1L6 4.5h2.4l4.4 6.3.7 1 5.8 8.2h-2.4l-4.9-7Z"/></svg>';
+  }
+  if (id === "instagram") {
+    const g = uid("ig");
+    return '<svg ' + common + '><defs><linearGradient id="' + g + '" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#f9ce34"/><stop offset=".45" stop-color="#ee2a7b"/><stop offset="1" stop-color="#6228d7"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#' + g + ')"/><rect x="7.2" y="7.2" width="9.6" height="9.6" rx="4.8" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="17.15" cy="6.85" r="1.05" fill="#fff"/></svg>';
+  }
+  if (id === "facebook") {
+    return '<svg ' + common + '><rect x="2" y="2" width="20" height="20" rx="6" fill="#1877F2"/><path fill="#fff" d="M13.2 18.6v-4.7h1.6l.3-1.9h-1.9V10.8c0-.6.2-.9.9-.9h1V8.1c-.3 0-1-.1-1.6-.1-1.6 0-2.7 1-2.7 2.8v1.2H9.3v1.9h1.5v4.7h2.4z"/></svg>';
+  }
+  const note = "M14.5 3.6c.8 2.7 2.6 4.4 5.1 4.7v2.4c-1.7-.1-3.3-.7-4.6-1.7v6.6a4.9 4.9 0 1 1-4.9-4.9c.4 0 .8.1 1.2.1v2.5a2.5 2.5 0 1 0 1.7 2.4V3.6h1.5z";
+  return '<svg ' + common + '><path fill="#25F4EE" transform="translate(-1.15 .45)" d="' + note + '"/><path fill="#FE2C55" transform="translate(1.15 -.35)" d="' + note + '"/><path fill="#111" d="' + note + '"/></svg>';
+}
+function spark(values, color, w, h) {
+  w = w || 160; h = h || 38;
+  const min = Math.min.apply(null, values);
+  const max = Math.max.apply(null, values);
+  const span = (max - min) || 1;
+  const pad = 3;
+  const pts = values.map(function (v, i) {
+    const x = (i / (values.length - 1)) * (w - 2) + 1;
+    const y = pad + (1 - (v - min) / span) * (h - pad * 2);
+    return [x, y];
+  });
+  const line = pts.map(function (p, i) { return (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" ");
+  const area = line + " L " + (w - 1) + " " + h + " L 1 " + h + " Z";
+  const last = pts[pts.length - 1];
+  const id = uid("sg");
+  return '<svg class="sparkline" viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" role="img" aria-hidden="true"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + color + '" stop-opacity="0.32"/><stop offset="1" stop-color="' + color + '" stop-opacity="0.02"/></linearGradient></defs><path d="' + area + '" fill="url(#' + id + ')"/><path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="2.2" fill="' + color + '"/></svg>';
+}
+function whenLabel(iso) {
+  const d = new Date(iso);
+  const wd = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getUTCDay()];
+  const mo = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()];
+  const hh = String(d.getUTCHours()).padStart(2, "0");
+  const mm = String(d.getUTCMinutes()).padStart(2, "0");
+  return wd + " " + d.getUTCDate() + " " + mo + " · " + hh + ":" + mm + " UTC";
+}
+function countdown(iso) {
+  const ms = new Date(iso).getTime() - Date.now();
+  if (ms <= 0) return "Passed";
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
+}
+function derive() {
+  const platforms = DATA.platforms.map(function (p) {
+    let views = 0, posts = 0, eng = 0;
+    const erSeries = p.days.map(function (d) {
+      const e = Math.round(d.views * d.er / 100);
+      views += d.views; posts += d.posts; eng += e;
+      return d.er;
+    });
+    const likes = Math.round(eng * p.mix[0]);
+    const comments = Math.round(eng * p.mix[1]);
+    const shares = eng - likes - comments;
+    const end = p.followers[p.followers.length - 1];
+    const followerDelta = end - p.followers[0];
+    const queue = DATA.schedule.filter(function (s) { return s.platform === p.id; }).length;
+    return Object.assign({}, p, {
+      views: views, posts: posts, eng: eng, erSeries: erSeries,
+      rate: views ? (eng / views) * 100 : 0,
+      likes: likes, comments: comments, shares: shares,
+      followerEnd: end, followerDelta: followerDelta, queue: queue,
+      latest: erSeries[erSeries.length - 1]
+    });
+  });
+  const byId = {};
+  platforms.forEach(function (p) { byId[p.id] = p; });
+  const BARS = {
+    youtube: "#FF0000",
+    x: "#0F1419",
+    instagram: "#E1306C",
+    facebook: "#1877F2",
+    tiktok: "linear-gradient(180deg,#25F4EE,#FE2C55)"
+  };
+  const HBARS = {
+    youtube: "#FF0000",
+    x: "#0F1419",
+    instagram: "linear-gradient(90deg,#f9ce34,#ee2a7b,#6228d7)",
+    facebook: "#1877F2",
+    tiktok: "linear-gradient(90deg,#25F4EE,#111 46%,#FE2C55)"
+  };
+  platforms.forEach(function (p) { p.bar = BARS[p.id]; p.hbar = HBARS[p.id]; });
+  const totals = platforms.reduce(function (a, p) {
+    a.views += p.views; a.posts += p.posts; a.eng += p.eng; a.followerDelta += p.followerDelta;
+    a.likes += p.likes; a.comments += p.comments; a.shares += p.shares;
+    return a;
+  }, { views: 0, posts: 0, eng: 0, followerDelta: 0, likes: 0, comments: 0, shares: 0 });
+  totals.rate = totals.views ? (totals.eng / totals.views) * 100 : 0;
+  const days = DAYS.map(function (d, i) {
+    let posts = 0, views = 0, eng = 0;
+    platforms.forEach(function (p) {
+      posts += p.days[i].posts;
+      views += p.days[i].views;
+      eng += Math.round(p.days[i].views * p.days[i].er / 100);
+    });
+    return { short: d.short, num: d.num, posts: posts, views: views, eng: eng, rate: views ? (eng / views) * 100 : 0 };
+  });
+  const busiest = days.slice().sort(function (a, b) { return b.views - a.views; })[0];
+  const top = DATA.top.map(function (item) {
+    const reactions = item.likes + item.comments + item.shares;
+    return Object.assign({}, item, { er: reactions / item.views * 100, reactions: reactions });
+  }).sort(function (a, b) { return b.views - a.views; });
+  const bestRate = top.slice().sort(function (a, b) { return b.er - a.er; })[0];
+  const counts = { Ready: 0, Queued: 0, Cutting: 0 };
+  DATA.schedule.forEach(function (s) { counts[s.status] += 1; });
+  const formatTotals = {};
+  platforms.forEach(function (p) {
+    p.parts.forEach(function (part) { formatTotals[part[0]] = (formatTotals[part[0]] || 0) + part[1]; });
+  });
+  const minutes = DATA.sessions.reduce(function (s, x) { return s + x.minutes; }, 0);
+  const natives = DATA.sessions.reduce(function (s, x) { return s + x.chips.length + x.extra; }, 0);
+  return {
+    platforms: platforms, byId: byId, totals: totals, days: days, busiest: busiest,
+    top: top, bestRate: bestRate, counts: counts, formatTotals: formatTotals,
+    minutes: minutes, natives: natives
+  };
+}
+function plat(id) { return DATA.platforms.filter(function (p) { return p.id === id; })[0]; }
+
+function renderKpis(m) {
+  const top = m.top[0];
+  const postDelta = m.totals.posts - DATA.prior.posts;
+  const rateDelta = m.totals.rate - DATA.prior.rate;
+  return '<section class="row kpis" aria-label="Headline figures">' +
+    kpi("01 · Post volume", comma(m.totals.posts), "Native posts this sample week", signed(postDelta) + " vs prior sample week") +
+    kpi("02 · Engagement rate", m.totals.rate.toFixed(2) + "%", "Engagements ÷ views, all five channels", signed(rateDelta, 2) + " pt vs prior sample week") +
+    kpi("03 · Top performing", compact(top.views), esc(top.title), esc(plat(top.platform).name) + " · " + top.er.toFixed(2) + "% rate") +
+    kpi("04 · Next go-live", '<span class="js-count">--:--:--</span>', "Countdown to the next placeholder slot", "Fri 27 Nov · 09:30 UTC") +
+  "</section>";
+}
+function kpi(k, big, sub, foot) {
+  return '<article class="card kpi"><div class="k">' + k + '</div><div class="big num">' + big + '</div><p class="sub">' + sub + '</p><p class="sub up">' + foot + "</p></article>";
+}
+function renderSparks(m) {
+  return '<section class="row sparks" aria-label="Seven day engagement sparklines">' + m.platforms.map(function (p) {
+    const delta = p.latest - p.erSeries[0];
+    return '<article class="card sparkcard" style="--brand:' + p.color + '">' +
+      '<div class="sparkhead">' + mark(p.id, 18) +
+        '<div class="who"><div class="name">' + esc(p.name) + (p.aka ? ' <span class="aka">' + esc(p.aka) + "</span>" : "") + "</div>" +
+        '<div class="aka">Placeholder channel</div></div></div>' +
+      '<div class="spark-metric"><div class="big num">' + p.latest.toFixed(1) + '%</div><div class="up num">' + signed(delta, 1) + " pt</div></div>" +
+      spark(p.erSeries, p.color) +
+      '<div class="meta"><span>Daily rate</span><span>7-day ' + p.rate.toFixed(2) + "%</span></div>" +
+      '<div class="meta"><span>' + p.posts + " posts</span><span>" + compact(p.views) + " views</span></div>" +
+    "</article>";
+  }).join("") + "</section>";
+}
+function renderVolume(m) {
+  const max = 8;
+  const bars = m.days.map(function (d, i) {
+    const cols = m.platforms.map(function (p) {
+      const posts = p.days[i].posts;
+      const h = posts === 0 ? 0 : (posts / max) * 100;
+      return '<i class="bar' + (posts === 0 ? " zero" : "") + '" style="--fill:' + p.bar + ";height:" + h + '%" title="' + d.short + " " + d.num + " · " + esc(p.name) + " · " + posts + " post" + (posts === 1 ? "" : "s") + '"></i>';
+    }).join("");
+    return '<div class="cols">' + cols + "</div>";
+  }).join("");
+  const labs = m.days.map(function (d) { return "<span>" + d.short + "</span>"; }).join("");
+  const legend = m.platforms.map(function (p) {
+    return "<span>" + mark(p.id, 14) + esc(p.name) + " <b class='num'>" + p.posts + "</b></span>";
+  }).join("");
+  const strip = m.days.map(function (d) {
+    return "<div><span class='dlbl'>" + d.short + "</span><strong>" + d.posts + "</strong><em>" + compact(d.views) + "</em></div>";
+  }).join("");
+  const maxViews = Math.max.apply(null, m.platforms.map(function (p) { return p.views; }));
+  const vrows = m.platforms.map(function (p) {
+    return '<div class="meter"><div class="who">' + mark(p.id, 14) + esc(p.name) + '</div><div class="track"><span style="width:' + (p.views / maxViews * 100) + "%;background:" + p.hbar + '"></span></div><div class="val">' + compact(p.views) + "</div></div>";
+  }).join("");
+  return '<article class="card"><div class="kicker"><i style="--c:#ff4d6d"></i>05 · Volume</div><h2>Post volume per channel</h2><p class="deck">Posts published each day, 20–26 Nov. Five thin bars are the five channels. Residual views still count on days with no new post.</p>' +
+    '<div class="vol-plot" style="margin-top:8px"><div class="yaxis"><span>8</span><span>6</span><span>4</span><span>2</span><span>0</span></div><div class="bars">' + bars + "</div></div>" +
+    '<div class="vol-labs"><span></span><div class="labs">' + labs + "</div></div>" +
+    '<div class="legend">' + legend + "</div>" +
+    '<div class="daystrip">' + strip + "</div>" +
+    '<div class="callout">Heaviest sample day · ' + m.busiest.short + " " + m.busiest.num + " · " + m.busiest.posts + " posts · " + comma(m.busiest.views) + " views</div>" +
+    '<div class="pin-bottom"><div class="k">Views by channel</div>' + vrows + "</div></article>";
+}
+function renderEr(m) {
+  const cap = 12;
+  const meters = m.platforms.map(function (p) {
+    return '<div class="meter"><div class="who">' + mark(p.id, 14) + esc(p.name) + '</div><div class="track"><span style="width:' + Math.min(100, p.rate / cap * 100) + "%;background:" + p.meter + '"></span></div><div class="val">' + p.rate.toFixed(2) + "%</div></div>";
+  }).join("");
+  const share = m.platforms.map(function (p) {
+    return '<i style="width:' + (p.eng / m.totals.eng * 100) + "%;background:" + p.hbar + '" title="' + esc(p.name) + " " + comma(p.eng) + ' engagements"></i>';
+  }).join("");
+  const blend = m.days.map(function (d) {
+    return "<div><span class='dlbl'>" + d.short + "</span><strong>" + d.rate.toFixed(1) + "%</strong><em>" + compact(d.eng) + "</em></div>";
+  }).join("");
+  const key = m.platforms.map(function (p) {
+    return '<span><i class="dot" style="--c:' + p.color + '"></i>' + esc(p.name) + " " + Math.round(p.eng / m.totals.eng * 100) + "%</span>";
+  }).join("");
+  const delta = m.totals.rate - DATA.prior.rate;
+  return '<article class="card"><div class="kicker"><i style="--c:#1a6fd4"></i>06 · Rate</div><h2>Engagement rate</h2>' +
+    '<div class="er-top"><div class="big num">' + m.totals.rate.toFixed(2) + '%</div><div class="up num">' + signed(delta, 2) + " pt</div></div>" +
+    '<p class="formula">7-day blend across all five placeholders. Rate = (likes + comments + shares) ÷ views. Meters run on a 0–12% scale. Prior sample week was ' + DATA.prior.rate.toFixed(2) + "%.</p>" +
+    meters +
+    '<div class="pair"><div><span>Engagements</span><strong class="num">' + comma(m.totals.eng) + '</strong></div><div><span>Views</span><strong class="num">' + comma(m.totals.views) + "</strong></div></div>" +
+    '<div class="share" aria-hidden="true">' + share + '</div><div class="share-key">' + key + "</div>" +
+    '<p class="formula">Share of engagements, not share of posts. TikTok carries most of the reactions in this sample week.</p>' +
+    '<div class="pin-bottom"><div class="k">Blended rate by day</div><div class="daystrip">' + blend + "</div>" +
+    '<div class="rxsum"><div><span>Likes</span><strong class="num">' + comma(m.totals.likes) + '</strong></div><div><span>Comments</span><strong class="num">' + comma(m.totals.comments) + '</strong></div><div><span>Shares</span><strong class="num">' + comma(m.totals.shares) + "</strong></div></div></div></article>";
+}
+function renderTop(m) {
+  const max = m.top[0].views;
+  const rows = m.top.map(function (item, i) {
+    const p = m.byId[item.platform];
+    const dark = i === 2 || i === 7;
+    return '<div class="top-row"><div class="rank" style="background:' + RANK_BG[i] + ";color:" + (dark ? "#12261f" : "#fff") + '">' + (i + 1) + "</div>" +
+      mark(item.platform, 16) +
+      '<div><div class="top-title clamp2">' + esc(item.title) + '</div><div class="top-meta">' + esc(p.name) + " · " + esc(item.format) + " · " + esc(item.when) + '</div><div class="vbar"><span style="width:' + (item.views / max * 100) + "%;background:" + p.color + '"></span></div></div>' +
+      '<div class="top-stat"><b class="num">' + compact(item.views) + '</b><span>' + item.er.toFixed(2) + "%</span></div></div>";
+  }).join("");
+  const b = m.bestRate;
+  return '<article class="card span2"><div class="kicker"><i style="--c:#f0a202"></i>07 · Leaders</div><h2>Top-performing content</h2><p class="deck">Ranked by views in the sample week. The rate beside each row is that post’s own engagements ÷ views.</p>' +
+    rows +
+    '<div class="bestline">Highest rate this sample · ' + esc(m.byId[b.platform].name) + " · " + b.er.toFixed(2) + "% · " + esc(b.title) + "</div></article>";
+}
+function renderQueue(m) {
+  const pills = '<span class="pill ready">' + m.counts.Ready + ' ready</span><span class="pill queued">' + m.counts.Queued + ' queued</span><span class="pill cutting">' + m.counts.Cutting + " cutting</span>";
+  const slots = [];
+  DATA.schedule.forEach(function (s) {
+    const p = m.byId[s.platform];
+    slots.push('<i class="on" style="--c:' + p.color + '" title="' + esc(p.name) + " · " + esc(s.status) + '"></i>');
+  });
+  for (let i = DATA.schedule.length; i < DATA.capacity; i++) slots.push("<i></i>");
+  const cards = DATA.schedule.map(function (s) {
+    const p = m.byId[s.platform];
+    return '<article class="scard" style="--brand:' + p.color + '"><div class="sc-top"><div class="sc-id">' + mark(s.platform, 16) + esc(p.name) + (p.aka ? " · " + esc(p.aka) : "") + '</div><span class="pill ' + s.status.toLowerCase() + '">' + esc(s.status) + "</span></div>" +
+      '<div class="when">' + whenLabel(s.at) + "</div>" +
+      '<div class="caption clamp2">“' + esc(s.caption) + "”</div>" +
+      '<div class="about clamp3">' + esc(s.about) + "</div>" +
+      '<div class="sc-foot"><span class="tag">' + esc(s.format) + '</span><span class="tag">From ' + esc(s.session) + "</span></div></article>";
+  }).join("");
+  return '<section class="card queue"><div class="card-head"><div><div class="kicker"><i style="--c:#7a5cff"></i>08 · The machine’s output</div><h2>Scheduled content</h2><p class="deck">Austin Chen’s AI Content Machine: one or two hours of the idea, remade into a native version for each platform. This queue is that output. Times, captions, and channels are placeholders.</p></div><div class="qstats">' + pills + '<span class="pill ready">Next <span class="js-count">--:--:--</span></span></div></div>' +
+    '<div class="slots" aria-hidden="true">' + slots.join("") + "</div>" +
+    '<div class="cards">' + cards + "</div></section>";
+}
+function renderPipeline(m) {
+  const steps = [
+    ["#ff4d6d", "Sit", "One or two hours. Say the idea once, on purpose."],
+    ["#1a6fd4", "Cut", "Rewrite it in the shape each platform already rewards."],
+    ["#0f9d72", "Ship", "The cards above are the cuts, waiting on a placeholder clock."]
+  ].map(function (s, i) {
+    return '<div class="step"><b><span class="n" style="--c:' + s[0] + '">' + (i + 1) + "</span>" + s[1] + "</b><span>" + s[2] + "</span></div>";
+  }).join("");
+  const sessions = DATA.sessions.map(function (s) {
+    const chips = s.chips.map(function (c) {
+      return '<span class="pchip">' + mark(c[0], 12) + esc(c[1]) + "</span>";
+    }).join("") + '<span class="tag">+' + s.extra + " more</span>";
+    const n = s.chips.length + s.extra;
+    return '<div class="sess"><div class="sess-top"><strong class="num">' + s.id + " · " + s.minutes + ' min</strong><span class="tag">' + n + " natives</span></div><p>" + esc(s.title) + "</p><div class=\"chips\">" + chips + "</div></div>";
+  }).join("");
+  const older = m.totals.posts - m.natives;
+  return '<article class="card"><div class="kicker"><i style="--c:#ff4fa3"></i>09 · Source → native</div><h2>What went into the machine</h2><div class="steps">' + steps + "</div>" +
+    '<div class="eq"><div class="big num">' + m.minutes + ' min</div><div class="big num">→ ' + m.natives + '</div><em>natives from 3 sample sittings · ' + (m.minutes / m.natives).toFixed(1) + " min of source per cut</em></div>" +
+    '<p class="deck">' + older + " other sample posts in the 7-day window are still moving from earlier sittings. " + m.totals.posts + " posts touched this week in all.</p>" +
+    sessions + "</article>";
+}
+function renderHeat() {
+  let cells = "<span></span>" + HEAT_HOURS.map(function (h) { return '<span class="h">' + h + "</span>"; }).join("");
+  DATA.heat.forEach(function (row, ri) {
+    cells += '<span class="h row">' + DAYS[ri].short + "</span>";
+    row.forEach(function (lv, ci) {
+      cells += '<i style="background:' + HEAT_COLORS[lv] + '" title="' + DAYS[ri].short + " " + HEAT_HOURS[ci] + ":00 UTC · " + HEAT_NAME[lv] + '"></i>';
+    });
+  });
+  const key = HEAT_COLORS.map(function (c, i) { return '<i style="background:' + c + '"></i>' + (i === 0 || i === 5 ? "<span>" + HEAT_NAME[i] + "</span>" : ""); }).join("");
+  return '<article class="card"><div class="kicker"><i style="--c:#7a5cff"></i>10 · Rhythm</div><h2>When the machine is busy</h2><p class="deck">Sample intensity by hour, UTC. Publishing, cutting, and caption work share one heat. Not a viewer’s local clock.</p><div class="heat" style="margin-top:8px">' + cells + '</div><div class="heat-key">' + key + "</div>" +
+    '<div class="callout">Hottest sample hours · Tue 14:00 and 18:00 UTC · a sitting, then the cuts going out</div></article>';
+}
+function renderFollowers(m) {
+  const maxDelta = Math.max.apply(null, m.platforms.map(function (p) { return p.followerDelta; }));
+  const delta = m.totals.followerDelta - DATA.prior.followers;
+  const rows = m.platforms.map(function (p) {
+    return '<div class="frow"><div class="fmain"><div class="sparkhead">' + mark(p.id, 16) + '<div class="who"><div class="name">' + esc(p.name) + '</div></div></div>' +
+      spark(p.followers, p.color, 120, 28).replace("sparkline", "sparkline f-spark") +
+      '<div class="fgain"><span style="width:' + (p.followerDelta / maxDelta * 100) + "%;background:" + p.color + '"></span></div></div>' +
+      '<div class="fnum"><b class="num">' + comma(p.followerEnd) + '</b><span class="up">' + signed(p.followerDelta) + "</span></div></div>";
+  }).join("");
+  return '<article class="card"><div class="kicker"><i style="--c:#1fbe7a"></i>11 · Following</div><h2>Follower motion</h2><div class="er-top"><div class="big num">' + signed(m.totals.followerDelta) + '</div><div class="up num">' + signed(delta) + " vs prior</div></div>" +
+    '<p class="formula">Net change across the sample week, end minus start. Sparks are scaled to each channel’s own range, so read the number, not the slope, for size.</p>' + rows + "</article>";
+}
+function renderFormats(m) {
+  const entries = Object.keys(FORMATS).map(function (key) {
+    return { key: key, n: m.formatTotals[key] || 0, label: FORMATS[key].label, color: FORMATS[key].color };
+  }).filter(function (e) { return e.n > 0; }).sort(function (a, b) { return b.n - a.n; });
+  const bar = entries.map(function (e) {
+    return '<i style="width:' + (e.n / m.totals.posts * 100) + "%;background:" + e.color + '" title="' + e.label + " " + e.n + '"></i>';
+  }).join("");
+  const legend = entries.map(function (e) {
+    return '<span><i class="dot" style="--c:' + e.color + '"></i>' + e.label + " <b class='num'>" + e.n + "</b></span>";
+  }).join("");
+  const rows = m.platforms.map(function (p) {
+    const segs = p.parts.map(function (part) {
+      return '<i style="width:' + (part[1] / p.posts * 100) + "%;background:" + FORMATS[part[0]].color + '" title="' + FORMATS[part[0]].label + " " + part[1] + '"></i>';
+    }).join("");
+    return '<div class="platbar"><div class="who" style="display:flex;align-items:center;gap:4px">' + mark(p.id, 14) + esc(p.name) + '</div><div class="fmt-bar" style="height:10px;margin:0">' + segs + '</div><b class="num">' + p.posts + "</b></div>";
+  }).join("");
+  return '<article class="card"><div class="kicker"><i style="--c:#ff8a3d"></i>12 · Shapes</div><h2>Native formats shipped</h2><p class="deck">Same week, counted by the shape it shipped in. Colors are format colors. The mark is the channel.</p><div class="fmt-bar">' + bar + '</div><div class="fmt-legend">' + legend + "</div>" + rows + "</article>";
+}
+function renderReactions(m) {
+  const rows = m.platforms.map(function (p) {
+    return '<div class="rx"><div class="rx-top"><div class="who" style="display:flex;gap:6px;align-items:center">' + mark(p.id, 14) + "<b>" + esc(p.name) + '</b></div><b class="num">' + comma(p.eng) + '</b></div>' +
+      '<div class="rx-bar"><i style="width:' + (p.likes / p.eng * 100) + '%;background:#0f9d72"></i><i style="width:' + (p.comments / p.eng * 100) + '%;background:#1a6fd4"></i><i style="width:' + (p.shares / p.eng * 100) + '%;background:#ff4d6d"></i></div>' +
+      '<div class="rx-nums"><span>' + esc(p.like) + " <b>" + comma(p.likes) + "</b></span><span>" + esc(p.comment) + " <b>" + comma(p.comments) + "</b></span><span>" + esc(p.share) + " <b>" + comma(p.shares) + "</b></span></div></div>";
+  }).join("");
+  return '<article class="card"><div class="kicker"><i style="--c:#ff4d6d"></i>13 · Reactions</div><h2>Likes, comments, shares</h2><p class="deck">Mint, blue, and coral are the three reaction types. Names change with the platform: replies and reposts on X, sends on Instagram.</p>' + rows + "</article>";
+}
+function renderConnections(m) {
+  return '<section class="row conns" aria-label="Channel connection status">' + m.platforms.map(function (p) {
+    return '<article class="card conn" style="border-top:3px solid ' + p.color + '"><div class="conn-top">' + mark(p.id, 22) +
+      '<div><div class="name">' + esc(p.name) + (p.aka ? " · " + esc(p.aka) : "") + '</div><div class="aka">Placeholder channel</div></div></div>' +
+      '<div class="statusline"><span class="ok"><i></i>Mock · healthy</span><span class="tag">No live login</span></div>' +
+      "<dl><div><dt>Posts 7d</dt><dd class='num'>" + p.posts + "</dd></div><div><dt>In queue</dt><dd class='num'>" + p.queue + "</dd></div>" +
+      "<div><dt>Followers</dt><dd class='num'>" + compact(p.followerEnd) + "</dd></div><div><dt>7-day rate</dt><dd class='num'>" + p.rate.toFixed(1) + "%</dd></div></dl>" +
+      '<div class="sync">Sample sync · ' + STAMP + "</div></article>";
+  }).join("") + "</section>";
+}
+function render(m) {
+  const ticker = DATA.ticker.concat(DATA.ticker).map(function (t, i) {
+    const c = RANK_BG[i % RANK_BG.length];
+    return '<span><i style="background:' + c + '"></i>' + esc(t) + "</span>";
+  }).join("");
+  document.getElementById("app").innerHTML =
+    '<header class="mast"><div class="brand"><div class="logo" aria-hidden="true"><span></span><span></span><span></span><span></span></div><div><div class="eyebrow">Mission control · sample beta</div><h1>The Content Machine</h1><p class="sub">Austin Chen’s AI Content Machine. One sitting of creative work, remade into native posts for YouTube, X, Instagram, Facebook, and TikTok. The point is the following. Every figure on this wall is mock data.</p></div></div>' +
+    '<div class="mast-meta"><div class="chip"><b></b>Sample data</div><div class="stamp"><div class="k">Sample stamp</div><strong class="num">' + STAMP + '</strong></div><div class="clockbox"><div class="k"><i class="pulse"></i>Local clock</div><strong class="num js-clock">--:--:--</strong></div></div></header>' +
+    '<div class="ticker" aria-hidden="true"><div class="ticker-track">' + ticker + "</div></div>" +
+    renderKpis(m) + renderSparks(m) +
+    '<section class="row hero">' + renderVolume(m) + renderEr(m) + renderTop(m) + "</section>" +
+    '<div class="row">' + renderQueue(m) + "</div>" +
+    '<section class="row split">' + renderPipeline(m) + renderHeat() + "</section>" +
+    '<section class="row trio">' + renderFollowers(m) + renderFormats(m) + renderReactions(m) + "</section>" +
+    renderConnections(m) +
+    '<footer class="foot"><span>Sample beta · placeholder channels only · no accounts, handles, or URLs · nothing here is a live post.</span><span class="num">Window 20–26 Nov 2026 · stamp ' + STAMP + "</span></footer>";
+}
+function tick() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
+  const clock = hh + ":" + mm + ":" + ss;
+  const count = countdown(NEXT_ISO);
+  document.querySelectorAll(".js-clock").forEach(function (n) { n.textContent = clock; });
+  document.querySelectorAll(".js-count").forEach(function (n) { n.textContent = count; });
+}
+render(derive());
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
